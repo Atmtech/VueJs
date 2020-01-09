@@ -1,3 +1,4 @@
+docker system prune
 cd /etc/serveur/VueJs
 sudo git pull https://github.com/Atmtech/VueJs.git
 cd /etc/serveur/VueJs/va-chier-api

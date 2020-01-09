@@ -14,21 +14,6 @@ export default {
   exec(nomService, data) {
     var url = this.obtenirUrl(nomService, data);
 
-    // repository.get(
-    //   url,
-    //   {},
-    //   {
-    //     auth: {
-    //       username: "tamere",
-    //       password: "10tamere01"
-    //     },
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json"
-    //     }
-    //   }
-    // );
-
     return repository.get(
       url,
       {
