@@ -1,7 +1,7 @@
 export default {
     obtenirServiceEndPoint(href) {
       if (href.indexOf("localhost") >= 0) {
-        return "http://localhost:20100/api"
+        return "http://localhost:8080/api"
       }
       if (href.indexOf("cuntcock") >= 0) {
         return "http://api.cuntcock.com/api"
