@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  cuntcock:
+    image: va-chier.com
+    environment:
+      - VIRTUAL_HOST=cuntcock.com
+  api-cuntcock:
+    image: api.va-chier.com
+    environment:
+      - VIRTUAL_HOST=api.cuntcock.com
