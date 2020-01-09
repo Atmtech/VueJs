@@ -11,6 +11,7 @@ var ObtenirIp = function (req) { return ObtenirParametre(req, "Ip"); }
 var ObtenirTitre = function (req) { return ObtenirParametre(req, "Titre"); }
 var ObtenirDescription = function (req) { return ObtenirParametre(req, "Description"); }
 var ObtenirIdInsulte = function (req) { return ObtenirParametre(req, "Id"); }
+var ObtenirFiltre = function (req) { return ObtenirParametre(req, "Filtre"); }
 
 module.exports = {
     ObtenirNombreParPage: ObtenirNombreParPage,
@@ -18,6 +19,8 @@ module.exports = {
     ObtenirIp: ObtenirIp,
     ObtenirTitre: ObtenirTitre,
     ObtenirDescription: ObtenirDescription,
-    ObtenirIdInsulte:ObtenirIdInsulte
+    ObtenirIdInsulte:ObtenirIdInsulte,
+    ObtenirFiltre:ObtenirFiltre
 }
+
 

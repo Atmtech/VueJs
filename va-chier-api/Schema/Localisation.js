@@ -9,5 +9,4 @@ var localisationSchema = new mongoose.Schema(
     Longitude:String,
   }
 );
-//module.exports = mongoose.model('Insulte', insulteSchema);
 module.exports = localisationSchema;

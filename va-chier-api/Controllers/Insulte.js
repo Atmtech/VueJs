@@ -3,7 +3,9 @@ const axios = require("axios");
 
 var ObtenirMongoose = function() {
   const mongoose = require("mongoose");
-  mongoose.connect("mongodb://localhost:27017/Vachier", {
+
+  mongoose.connect("mongodb+srv://Tamere:10Crevette01@clustertamere-e1cpu.mongodb.net/Vachier?retryWrites=true&w=majority",{
+  //mongoose.connect("mongodb://localhost:27017/Vachier", {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
@@ -12,9 +14,9 @@ var ObtenirMongoose = function() {
 
 var ObtenirModelInsulte = function(mongoose) {
   var mongoosePaginate = require("mongoose-paginate-v2");
-  var insulteSchema = require("../Schema/Insulte");
+  var insulteSchema = require("../schema/insulte");
   insulteSchema.plugin(mongoosePaginate);
-  return mongoose.model("Insulte", insulteSchema);
+  return mongoose.model("insulte", insulteSchema);
 };
 
 exports.ObtenirNombrePageInsulte = function(req, res) {
@@ -30,6 +32,45 @@ exports.ObtenirNombrePageInsulte = function(req, res) {
 
   insulte.paginate({}, options, function(err, result) {
     res.send(result.totalPages.toString());
+  });
+};
+
+exports.ObtenirNombrePageFiltre = function(req, res) {
+  var filtre = queryString.ObtenirFiltre(req);
+  var nombreParPage = queryString.ObtenirNombreParPage(req);
+  var insulte = ObtenirModelInsulte(ObtenirMongoose());
+  const options = {
+    page: 1,
+    limit: nombreParPage,
+    collation: {
+      locale: "en"
+    }
+  };
+  insulte.paginate({ Description: { $regex: filtre } }, options, function(
+    err,
+    result
+  ) {
+    res.send(result.totalPages.toString());
+  });
+};
+
+exports.ObtenirInsulteParPageFiltre = function(req, res) {
+  var page = queryString.ObtenirPage(req);
+  var filtre = queryString.ObtenirFiltre(req);
+  var nombreParPage = queryString.ObtenirNombreParPage(req);
+  var insulte = ObtenirModelInsulte(ObtenirMongoose());
+  const options = {
+    page: page,
+    limit: nombreParPage,
+    collation: {
+      locale: "en"
+    }
+  };
+  insulte.paginate({ Description: { $regex: filtre } }, options, function(
+    err,
+    result
+  ) {
+    res.send(result.docs);
   });
 };
 
@@ -74,8 +115,8 @@ exports.ObtenirTop10Localisation = function(req, res) {
         count: { $sum: 1 }
       }
     },
-    { "$sort": { "count": -1 } },
-    { "$limit": 10 }
+    { $sort: { count: -1 } },
+    { $limit: 10 }
   ];
 
   var Insulte = ObtenirModelInsulte(ObtenirMongoose());
@@ -110,8 +151,6 @@ exports.EnregistrerInsulte = function(req, res) {
       if (err) return console.error(err);
       res.send("OK");
     });
-
-    //res.send(insulte);
   });
 };
 

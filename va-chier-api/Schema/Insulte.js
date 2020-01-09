@@ -1,5 +1,5 @@
 var mongoose = require("mongoose");
-var localisationSchema = require("./Localisation")
+var localisationSchema = require("./localisation")
 var insulteSchema = new mongoose.Schema(
   {
     DateCreation: Date,

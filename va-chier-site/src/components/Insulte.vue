@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="card">
+    <div class="card" style="width: 16.6rem;">
       <div class="card-body">
         <h6>{{ Titre }}</h6>
         <div style="font-size: 0.8em;">
           <div v-on:click="jaime" style="cursor:pointer;">
-            <img src="../assets/likebrun.png"  />
+            <img src="../assets/likebrun.png" />
             {{ NombreJaime }} votes
           </div>
         </div>
@@ -19,8 +19,8 @@
           <div style="color: #7C795C; font-size: 11px; font-weight: bold;">
             {{ formaterDate(DateCreation) }}
           </div>
-          {{ Provenance }}
-          <!-- <a v-bind:href="url"> {{ ProvenanceInsulte }}</a> -->
+          
+          <a v-bind:href="Url" target="_new"> {{ Provenance }}</a>
         </div>
       </div>
     </div>
@@ -33,7 +33,7 @@ export default {
   props: ["Insulte"],
   data: function() {
     return {
-      // url: this.remplirAdresseGoogle(),
+      Url: null,
       Titre: null,
       Id: null,
       NombreJaime: null,
@@ -44,6 +44,7 @@ export default {
     };
   },
   mounted() {
+    (this.Url = "https://www.google.ca/maps/search/@" + this.Insulte.Localisation.Latitude + "," + this.Insulte.Localisation.Longitude),
     (this.Titre = this.Insulte.Titre),
       (this.Id = this.Insulte._id),
       (this.NombreJaime = this.Insulte.NombreJaime),

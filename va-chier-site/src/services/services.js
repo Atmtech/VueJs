@@ -13,7 +13,36 @@ export default {
   },
   exec(nomService, data) {
     var url = this.obtenirUrl(nomService, data);
-    return repository.get(url);
+
+    // repository.get(
+    //   url,
+    //   {},
+    //   {
+    //     auth: {
+    //       username: "tamere",
+    //       password: "10tamere01"
+    //     },
+    //     headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json"
+    //     }
+    //   }
+    // );
+
+    return repository.get(
+      url,
+      {
+        withCredentials: true,
+        auth: {
+          username: "tamere",
+          password: "10tamere01"
+        },
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      }
+    );
   },
   obtenirParametre(req, nomParametre) {
     var valeur = queryString.decode(req);

@@ -1,14 +1,64 @@
 <template>
   <Master>
     <div class="container">
-      <button
-        type="button"
-        class="btn"
-        style="background-color: rgb(132,82,31); color: white;"
-        v-on:click="voirAjouterMerde"
-      >
-        AJOUTE TA MERDE
-      </button>
+      <div class="row">
+        <div class="col">
+          <button
+            type="button"
+            class="btn"
+            style="background-color: rgb(132,82,31); color: white;"
+            v-on:click="voirAjouterMerde"
+          >
+            AJOUTE TA MERDE
+          </button>
+        </div>
+        <div class="col">
+          <nav>
+            <ul class="pagination">
+              <li class="page-item" v-if="pageSelectionne > 1">
+                <button
+                  type="button"
+                  v-on:click="precedente"
+                  class="btn"
+                  style="background-color: rgb(132,82,31); color: white;"
+                >
+                  Précédente
+                </button>
+              </li>
+              <li class="page-item">
+                <select
+                  class="form-control"
+                  v-model="pageSelectionne"
+                  @change="onChangePage($event)"
+                >
+                  <option v-for="page in pages" :value="page" :key="page">{{
+                    page
+                  }}</option>
+                </select>
+              </li>
+              <li class="page-item" v-if="pageSelectionne < nombreTotalPage">
+                <button
+                  type="button"
+                  v-on:click="prochaine"
+                  class="btn"
+                  style="background-color: rgb(132,82,31); color: white;"
+                >
+                  Prochaine page de merde
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div class="col">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="rechercher votre merde"
+            v-on:keyup="rechercher"
+            v-model="filtre"
+          />
+        </div>
+      </div>
 
       <div class="pt-3" v-if="estAjouterMerde">
         <div class="card">
@@ -16,14 +66,6 @@
             <div class="row" v-if="erreurs.length">
               <div class="col-12">
                 <div class="alert alert-danger">
-                  <button
-                    type="button"
-                    class="close"
-                    data-dismiss="alert"
-                    aria-hidden="true"
-                  >
-                    ×
-                  </button>
                   <h5>
                     <i class="icon fas fa-ban"></i> Des erreurs dans votre merde
                   </h5>
@@ -69,7 +111,7 @@
                 <option>se fait faire un bukkake de marde</option>
                 <option>te roule dans la marde</option>
               </select>
-              <small id="emailHelp" class="form-text text-muted"
+              <small class="form-text text-muted"
                 >Enduisez le tout d'une belle insulte à saveur de marde.</small
               >
             </div>
@@ -95,31 +137,6 @@
         </div>
       </div>
 
-      <nav class="pt-2">
-        <ul class="pagination">
-          <li class="page-item" v-if="pageSelectionne > 1">
-            <button type="button" class="page-link" v-on:click="precedente">
-              Précédente
-            </button>
-          </li>
-          <li class="page-item">
-            <select
-              class="form-control"
-              v-model="pageSelectionne"
-              @change="onChangePage($event)"
-            >
-              <option v-for="page in pages" :value="page" :key="page">{{
-                page
-              }}</option>
-            </select>
-          </li>
-          <li class="page-item" v-if="pageSelectionne < nombreTotalPage">
-            <button type="button" class="page-link" v-on:click="prochaine">
-              Prochaine
-            </button>
-          </li>
-        </ul>
-      </nav>
       <div class="row">
         <div v-for="item in this.insultes" v-bind:key="item._id">
           <div class="pl-3 pb-2">
@@ -153,13 +170,39 @@ export default {
       pages: [],
       nombreParPage: 10,
       pageSelectionne: 1,
-      nombreTotalPage: 0
+      nombreTotalPage: 0,
+      filtre: null
     };
   },
   methods: {
+    rechercher: function() {
+      if (this.filtre == "") {
+        this.obtenirInsulte();
+      } else {
+        this.pages = [];
+        Services.exec("ObtenirInsulteParPageFiltre", {
+          NombreParPage: this.nombreParPage,
+          Page: this.pageSelectionne,
+          Filtre: this.filtre
+        }).then(response => {
+          this.insultes = response.data;
+          Services.exec("ObtenirNombrePageFiltre", {
+            NombreParPage: this.nombreParPage,
+            Filtre: this.filtre
+          }).then(response => {
+            var nombrePage = response.data;
+            this.nombreTotalPage = nombrePage;
+            for (let index = 1; index < nombrePage + 1; index++) {
+              this.pages.push(index);
+            }
+          });
+        });
+      }
+    },
     precedente: function() {
       if (this.pageSelectionne != 1) {
         this.pageSelectionne = this.pageSelectionne - 1;
+        this.obtenirInsulte();
       }
     },
     prochaine: function() {
@@ -175,21 +218,21 @@ export default {
     obtenirInsulte: function() {
       this.pages = [];
 
+      Services.exec("ObtenirNombrePageInsulte", {
+        NombreParPage: this.nombreParPage
+      }).then(response => {
+        var nombrePage = response.data;
+        this.nombreTotalPage = nombrePage;
+        for (let index = 1; index < nombrePage + 1; index++) {
+          this.pages.push(index);
+        }
+      });
+
       Services.exec("ObtenirInsulteParPage", {
         NombreParPage: this.nombreParPage,
         Page: this.pageSelectionne
       }).then(response => {
         this.insultes = response.data;
-
-        Services.exec("ObtenirNombrePageInsulte", {
-          NombreParPage: this.nombreParPage
-        }).then(response => {
-          var nombrePage = response.data;
-          this.nombreTotalPage = nombrePage;
-          for (let index = 1; index < nombrePage + 1; index++) {
-            this.pages.push(index);
-          }
-        });
       });
     },
     validerChampsRequis: function(champs) {
