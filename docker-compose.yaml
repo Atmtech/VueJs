@@ -7,11 +7,7 @@ services:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-
-  cuntcock:
-    image: va-chier.com
-    environment:
-      - VIRTUAL_HOST=cuntcock.com
+  
   api-cuntcock:
     image: api.va-chier.com
     environment:
