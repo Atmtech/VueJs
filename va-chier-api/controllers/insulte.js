@@ -123,7 +123,6 @@ exports.EnregistrerInsulte = function(req, res) {
   if ((ip = "::1")) ip = "207.96.161.194"; //MontrealQuebec
 
   axios.get("https://ipapi.co/" + ip + "/json/").then(function(response) {
-    console.log("save")    
     var insultation = new Insulte({
       DateCreation: Date.now(),
       Titre: titre,
