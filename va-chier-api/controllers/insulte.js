@@ -1,27 +1,22 @@
 var queryString = require("../queryString");
 const axios = require("axios");
+var Insulte = require("../schema/insulte").InsulteFactory();
 
-var ObtenirMongoose = function() {
-  const mongoose = require("mongoose");
-
-  mongoose.connect("mongodb+srv://Tamere:10Crevette01@clustertamere-e1cpu.mongodb.net/Vachier?retryWrites=true&w=majority",{
-  //mongoose.connect("mongodb://localhost:27017/Vachier", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-  return mongoose;
-};
-
-var ObtenirModelInsulte = function(mongoose) {
-  var mongoosePaginate = require("mongoose-paginate-v2");
-  var insulteSchema = require("../schema/insulte");
-  insulteSchema.plugin(mongoosePaginate);
-  return mongoose.model("insulte", insulteSchema);
+exports.TestConnection = function(req, res) {
+  const nombreInsulte = 10;
+  Insulte.find({})
+    .sort({ NombreJaime: "descending" })
+    .exec(function(err, docs) {
+      var retour = [];
+      for (let index = 0; index < nombreInsulte; index++) {
+        retour.push(docs[index]);
+      }
+      res.send(retour);
+    });
 };
 
 exports.ObtenirNombrePageInsulte = function(req, res) {
   var nombreParPage = queryString.ObtenirNombreParPage(req);
-  var insulte = ObtenirModelInsulte(ObtenirMongoose());
   const options = {
     page: 1,
     limit: nombreParPage,
@@ -30,7 +25,7 @@ exports.ObtenirNombrePageInsulte = function(req, res) {
     }
   };
 
-  insulte.paginate({}, options, function(err, result) {
+  Insulte.paginate({}, options, function(err, result) {
     res.send(result.totalPages.toString());
   });
 };
@@ -38,7 +33,6 @@ exports.ObtenirNombrePageInsulte = function(req, res) {
 exports.ObtenirNombrePageFiltre = function(req, res) {
   var filtre = queryString.ObtenirFiltre(req);
   var nombreParPage = queryString.ObtenirNombreParPage(req);
-  var insulte = ObtenirModelInsulte(ObtenirMongoose());
   const options = {
     page: 1,
     limit: nombreParPage,
@@ -46,7 +40,7 @@ exports.ObtenirNombrePageFiltre = function(req, res) {
       locale: "en"
     }
   };
-  insulte.paginate({ Description: { $regex: filtre } }, options, function(
+  Insulte.paginate({ Description: { $regex: filtre } }, options, function(
     err,
     result
   ) {
@@ -58,7 +52,7 @@ exports.ObtenirInsulteParPageFiltre = function(req, res) {
   var page = queryString.ObtenirPage(req);
   var filtre = queryString.ObtenirFiltre(req);
   var nombreParPage = queryString.ObtenirNombreParPage(req);
-  var insulte = ObtenirModelInsulte(ObtenirMongoose());
+
   const options = {
     page: page,
     limit: nombreParPage,
@@ -66,7 +60,7 @@ exports.ObtenirInsulteParPageFiltre = function(req, res) {
       locale: "en"
     }
   };
-  insulte.paginate({ Description: { $regex: filtre } }, options, function(
+  Insulte.paginate({ Description: { $regex: filtre } }, options, function(
     err,
     result
   ) {
@@ -77,7 +71,6 @@ exports.ObtenirInsulteParPageFiltre = function(req, res) {
 exports.ObtenirInsulteParPage = function(req, res) {
   var page = queryString.ObtenirPage(req);
   var nombreParPage = queryString.ObtenirNombreParPage(req);
-  var insulte = ObtenirModelInsulte(ObtenirMongoose());
   const options = {
     page: page,
     limit: nombreParPage,
@@ -85,20 +78,20 @@ exports.ObtenirInsulteParPage = function(req, res) {
       locale: "en"
     }
   };
-  insulte.paginate({}, options, function(err, result) {
+  Insulte.paginate({}, options, function(err, result) {
     res.send(result.docs);
   });
 };
 
 exports.ObtenirTop10Insulte = function(req, res) {
   const nombreInsulte = 10;
-  var Insulte = ObtenirModelInsulte(ObtenirMongoose());
   Insulte.find({})
     .sort({ NombreJaime: "descending" })
     .exec(function(err, docs) {
       var retour = [];
       for (let index = 0; index < nombreInsulte; index++) {
-        retour.push(docs[index]);
+        if (docs[index] != null)
+          retour.push(docs[index]);
       }
       res.send(retour);
     });
@@ -119,7 +112,6 @@ exports.ObtenirTop10Localisation = function(req, res) {
     { $limit: 10 }
   ];
 
-  var Insulte = ObtenirModelInsulte(ObtenirMongoose());
   Insulte.aggregate(aggregatorOpts).exec(function(err, docs) {
     res.send(docs);
   });
@@ -131,8 +123,7 @@ exports.EnregistrerInsulte = function(req, res) {
   var titre = queryString.ObtenirTitre(req);
 
   axios.get("https://ipapi.co/" + ip + "/json/").then(function(response) {
-    var Insulte = ObtenirModelInsulte(ObtenirMongoose());
-    var insulte = new Insulte({
+    var insultation = new Insulte({
       DateCreation: Date.now(),
       Titre: titre,
       Description: description,
@@ -147,8 +138,7 @@ exports.EnregistrerInsulte = function(req, res) {
       }
     });
 
-    insulte.save(function(err, insultation) {
-      if (err) return console.error(err);
+    insultation.save(function(err, insultation) {
       res.send("OK");
     });
   });
@@ -156,7 +146,6 @@ exports.EnregistrerInsulte = function(req, res) {
 
 exports.ObtenirInsulte = function(req, res) {
   var idInsulte = queryString.ObtenirIdInsulte(req);
-  var Insulte = ObtenirModelInsulte(ObtenirMongoose());
   Insulte.findOne({ _id: idInsulte }, function(err, doc) {
     res.send(doc);
   });
@@ -164,7 +153,6 @@ exports.ObtenirInsulte = function(req, res) {
 
 exports.Jaime = function(req, res) {
   var idInsulte = queryString.ObtenirIdInsulte(req);
-  var Insulte = ObtenirModelInsulte(ObtenirMongoose());
   Insulte.findOne({ _id: idInsulte }, function(err, doc) {
     doc.NombreJaime = doc.NombreJaime + 1;
     doc.save();

@@ -13,7 +13,7 @@ var whitelist = [
 var corsOptions = {
   credentials: true,
   origin: function(origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS: " + origin));
@@ -21,9 +21,12 @@ var corsOptions = {
   }
 };
 
+
+
 app.use(cors(corsOptions));
 
 app.use(function(req, res, next) {
+
   const auth = { login: "tamere", password: "10tamere01" };
   const b64auth = (req.headers.authorization || "").split(" ")[1] || "";
   const [login, password] = Buffer.from(b64auth, "base64")

@@ -36,7 +36,7 @@ export default {
       Url: null,
       Titre: null,
       Id: null,
-      NombreJaime: null,
+      NombreJaime: 0,
       Description: null,
       DateCreation: null,
       Localisation: null,
