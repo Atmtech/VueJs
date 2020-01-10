@@ -12,7 +12,7 @@
           <div v-for="item in this.insultes" v-bind:key="item._id">
             <table style="width: 100%">
               <tr>
-                <td style="width: 80%">{{ item.Titre }}</td>
+                <td style="width: 80%;">{{ item.Titre == "" ? item.Description :item.Titre  }}</td>
                 <td style="width: 20%; font-size: 0.8em;" class="text-right">
                   {{ item.NombreJaime }} votes
                 </td>

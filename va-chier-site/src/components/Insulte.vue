@@ -53,7 +53,7 @@ export default {
       (this.Localisation = this.Insulte.Localisation),
       (this.Provenance =
         this.Insulte.Localisation.Ville +
-        " " +
+        ", " +
         this.Insulte.Localisation.Region +
         ", " +
         this.Insulte.Localisation.Pays);

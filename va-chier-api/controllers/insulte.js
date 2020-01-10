@@ -77,7 +77,7 @@ exports.ObtenirInsulteParPage = function(req, res) {
     collation: {
       locale: "en"
     },
-    sort: {DateCreation:-1}
+    sort: { DateCreation: -1 }
   };
   Insulte.paginate({}, options, function(err, result) {
     res.send(result.docs);
@@ -101,6 +101,11 @@ exports.ObtenirTop10Localisation = function(req, res) {
   const aggregatorOpts = [
     {
       $unwind: "$Localisation"
+    },
+    {
+      $match: {
+        "Localisation.Pays": { $exists: true, $ne: null, $ne: "" }
+      }
     },
     {
       $group: {
