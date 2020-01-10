@@ -7,7 +7,7 @@
         <a href="/" class="navbar-brand d-flex align-items-center">
           <img src="../assets/logo.png" width="70" height="60" />
           <h1>VA-CHIER.COM |</h1>
-          <div style="text-transform: uppercase; padding-left:10px;">
+          <div style="text-transform: uppercase; padding-left:75px;">
             À tous ceux qui le mérite
             <br />
             Allez donc chier !!!
