@@ -174,7 +174,7 @@ export default {
       description: null,
       estAjouterMerde: false,
       pages: [],
-      nombreParPage: 10,
+      nombreParPage: 12,
       pageSelectionne: 1,
       nombreTotalPage: 0,
       filtre: null

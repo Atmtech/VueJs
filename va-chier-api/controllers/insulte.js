@@ -76,7 +76,8 @@ exports.ObtenirInsulteParPage = function(req, res) {
     limit: nombreParPage,
     collation: {
       locale: "en"
-    }
+    },
+    sort: {DateCreation:-1}
   };
   Insulte.paginate({}, options, function(err, result) {
     res.send(result.docs);
