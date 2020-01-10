@@ -6,9 +6,11 @@ var app = express();
 var cors = require("cors");
 
 var whitelist = [
+  "http://localhost:8080",
+  "http://localhost:8081",
   "http://localhost:8082",
-  "http://cuntcock.com",
-  "http://localhost:8080"
+  "http://localhost:8083",
+  "http://cuntcock.com"
 ];
 var corsOptions = {
   credentials: true,
