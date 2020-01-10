@@ -1,65 +1,73 @@
 <template>
   <Master>
-    <div class="container">
-      <div class="row">
-        <div class="col">
-          <button
-            type="button"
-            class="btn"
-            style="background-color: rgb(132,82,31); color: white;"
-            v-on:click="voirAjouterMerde"
-          >
-            AJOUTE TA MERDE
-          </button>
-        </div>
-        <div class="col">
-          <nav>
-            <ul class="pagination">
-              <li class="page-item" v-if="pageSelectionne > 1">
-                <button
-                  type="button"
-                  v-on:click="precedente"
-                  class="btn"
-                  style="background-color: rgb(132,82,31); color: white;"
-                >
-                  Précédente
-                </button>
-              </li>
-              <li class="page-item">
-                <select
-                  class="form-control"
-                  v-model="pageSelectionne"
-                  @change="onChangePage($event)"
-                >
-                  <option v-for="page in pages" :value="page" :key="page">{{
-                    page
-                  }}</option>
-                </select>
-              </li>
-              <li class="page-item" v-if="pageSelectionne < nombreTotalPage">
-                <button
-                  type="button"
-                  v-on:click="prochaine"
-                  class="btn"
-                  style="background-color: rgb(132,82,31); color: white;"
-                >
-                  Prochaine page de merde
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div class="col">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="rechercher votre merde"
-            v-on:keyup="rechercher"
-            v-model="filtre"
-          />
+    <div
+      class="container-fluid"
+      style="background-color: rgb(132,82,31); color: white;"
+    >
+      <div class="container pt-2 pb-2">
+        <div class="row">
+          <div class="col">
+            <button
+              type="button"
+              class="btn"
+              style="background-color: #4C2F12; color: white;"
+              v-on:click="voirAjouterMerde"
+            >
+              AJOUTE TA MERDE
+            </button>
+          </div>
+
+          <div class="col">
+            <table>
+              <tr>
+                <td>
+                  <button
+                    type="button"
+                    v-on:click="precedente"
+                    class="btn"
+                    style="background-color: #4C2F12; color: white;"
+                  >
+                    <img src="../assets/precedent.png" />
+                  </button>
+                </td>
+                <td>
+                  <select
+                    class="form-control"
+                    v-model="pageSelectionne"
+                    style="background-color: rgb(132,82,31); color: white;"
+                    @change="onChangePage($event)"
+                  >
+                    <option v-for="page in pages" :value="page" :key="page">{{
+                      page
+                    }}</option>
+                  </select>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    v-on:click="prochaine"
+                    class="btn"
+                    style="background-color: #4C2F12; color: white;"
+                  >
+                    <img src="../assets/prochaine.png" />
+                  </button>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="col">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="rechercher votre merde"
+              v-on:keyup="rechercher"
+              v-model="filtre"
+            />
+          </div>
         </div>
       </div>
-
+    </div>
+    <div class="container">
       <div class="pt-3" v-if="estAjouterMerde">
         <div class="card">
           <div class="card-body">
@@ -138,7 +146,7 @@
       </div>
 
       <div class="row">
-        <div v-for="item in this.insultes" v-bind:key="item._id">
+        <div v-for="item in this.insultes" v-bind:key="item._id" class="pt-3">
           <div class="pl-3 pb-2">
             <Insulte v-bind:Insulte="item"></Insulte>
           </div>
@@ -149,15 +157,13 @@
 </template>
 
 <script>
-import Master from "../components/Master.vue";
-import Insulte from "../components/Insulte.vue";
 import Services from "../services/services";
 import axios from "axios";
 
 export default {
   components: {
-    Master,
-    Insulte
+    Master: () => import("../components/Master.vue"),
+    Insulte: () => import("../components/Insulte.vue")
   },
   data: function() {
     return {

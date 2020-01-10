@@ -5,18 +5,21 @@ var routes = require("./routes");
 var app = express();
 var cors = require("cors");
 
-
-var whitelist = ['http://localhost:8082', 'http://cuntcock.com']
+var whitelist = [
+  "http://localhost:8082",
+  "http://cuntcock.com",
+  "http://localhost:8080"
+];
 var corsOptions = {
   credentials: true,
-  origin: function (origin, callback) {
+  origin: function(origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true)
+      callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS: ' + origin))
+      callback(new Error("Not allowed by CORS: " + origin));
     }
   }
-}
+};
 
 app.use(cors(corsOptions));
 
@@ -50,4 +53,3 @@ function main() {
   });
 }
 main();
-
