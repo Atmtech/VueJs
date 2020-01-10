@@ -90,8 +90,7 @@ exports.ObtenirTop10Insulte = function(req, res) {
     .exec(function(err, docs) {
       var retour = [];
       for (let index = 0; index < nombreInsulte; index++) {
-        if (docs[index] != null)
-          retour.push(docs[index]);
+        if (docs[index] != null) retour.push(docs[index]);
       }
       res.send(retour);
     });
@@ -121,8 +120,10 @@ exports.EnregistrerInsulte = function(req, res) {
   var ip = queryString.ObtenirIp(req);
   var description = queryString.ObtenirDescription(req);
   var titre = queryString.ObtenirTitre(req);
+  if ((ip = "::1")) ip = "207.96.161.194"; //MontrealQuebec
 
   axios.get("https://ipapi.co/" + ip + "/json/").then(function(response) {
+    console.log("save")    
     var insultation = new Insulte({
       DateCreation: Date.now(),
       Titre: titre,

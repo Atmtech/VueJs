@@ -269,32 +269,17 @@ export default {
     },
     enregistrerInsulte: function() {
       if (this.validerFormulaire()) {
-        var localip = require("local-ip");
-        var iface = "wlan0";
-
-        localip(iface, function(err, res) {
-alert(res)
-
-          if (err) {
-            throw new Error("I have no idea what my local ip is.");
-          }
-          alert("My local ip address on " + iface + " is " + res);
+        Services.exec("Ip", {}).then(response => {
+          var ip = response.data.clientIp;
+          Services.exec("EnregistrerInsulte", {
+            Ip: ip,
+            Titre: this.titre,
+            Description: this.description + " " + this.insulte
+          }).then(() => {
+            this.estAjouterMerde = false;
+            this.obtenirInsulte();
+          });
         });
-
-        //alert(window.location.host)
-        // const url = "https://api.ipify.org/?format=json";
-        // var ip = null;
-        // axios.get(url).then(response => {
-        //   ip = response.data.ip;
-        //   alert('OK')
-        //   Services.exec("EnregistrerInsulte", {
-        //     Ip: ip,
-        //     Titre: this.titre,
-        //     Description: this.description + " " + this.insulte
-        //   });
-        //   this.estAjouterMerde = false;
-        //   this.obtenirInsulte();
-        // });
       }
     }
   },
