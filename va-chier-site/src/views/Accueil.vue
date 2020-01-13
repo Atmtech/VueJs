@@ -254,6 +254,7 @@ export default {
         this.erreurs = [];
         this.validerChampsRequis("titre");
         this.validerChampsRequis("description");
+
         return false;
       }
     },
@@ -273,8 +274,11 @@ export default {
           var ip = response.data.clientIp;
           Services.exec("EnregistrerInsulte", {
             Ip: ip,
-            Titre: this.titre,
-            Description: this.description + " " + this.insulte
+            Titre: this.titre.replace(/(?:https?|ftp):\/\/[\n\S]+/g, ""),
+            Description: (this.description + " " + this.insulte).replace(
+              /(?:https?|ftp):\/\/[\n\S]+/g,
+              ""
+            )
           }).then(() => {
             this.estAjouterMerde = false;
             this.obtenirInsulte();

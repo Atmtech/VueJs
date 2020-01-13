@@ -24,6 +24,7 @@ var insulteSchema = new Schema(
 
 exports.InsulteFactory = function() {
   var conn = connectionPool.getConnection(
+    //"mongodb://127.0.0.1:27017/Vachier?retryWrites=true&w=majority",
     "mongodb+srv://Tamere:10Crevette01@clustertamere-e1cpu.mongodb.net/Vachier?retryWrites=true&w=majority",
     "Vachier"
   );

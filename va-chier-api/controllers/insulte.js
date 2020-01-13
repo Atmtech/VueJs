@@ -126,13 +126,14 @@ exports.EnregistrerInsulte = function(req, res) {
   var ip = queryString.ObtenirIp(req);
   var description = queryString.ObtenirDescription(req);
   var titre = queryString.ObtenirTitre(req);
-  if ((ip = "::1")) ip = "207.96.161.194"; //MontrealQuebec
+  
+   if ((ip = "::1")) ip = "207.96.161.194"; //MontrealQuebec
 
   axios.get("https://ipapi.co/" + ip + "/json/").then(function(response) {
     var insultation = new Insulte({
       DateCreation: Date.now(),
-      Titre: titre,
-      Description: description,
+      Titre: titre.replace(/(?:https?|ftp):\/\/[\n\S]+/g, ""),
+      Description: description.replace(/(?:https?|ftp):\/\/[\n\S]+/g, ""),
       NombreJaime: 0,
       Localisation: {
         Ip: ip,
@@ -143,7 +144,7 @@ exports.EnregistrerInsulte = function(req, res) {
         Longitude: response.data.longitude
       }
     });
-
+    
     insultation.save(function(err, insultation) {
       res.send("OK");
     });
