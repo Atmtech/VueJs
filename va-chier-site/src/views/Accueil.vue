@@ -6,7 +6,7 @@
     >
       <div class="container pt-2 pb-2">
         <div class="row">
-          <div class="col">
+         
             <button
               type="button"
               class="btn"
@@ -15,16 +15,14 @@
             >
               AJOUTE TA MERDE
             </button>
-          </div>
-
-          <div class="col">
+         
             <table>
               <tr>
                 <td>
                   <button
                     type="button"
                     v-on:click="precedente"
-                    class="btn"
+                    class="btn ml-2"
                     style="background-color: #4C2F12; color: white;"
                   >
                     <img src="../assets/precedent.png" />
@@ -32,7 +30,7 @@
                 </td>
                 <td>
                   <select
-                    class="form-control"
+                    class="form-control "
                     v-model="pageSelectionne"
                     style="background-color: rgb(132,82,31); color: white;"
                     @change="onChangePage($event)"
@@ -54,16 +52,15 @@
                 </td>
               </tr>
             </table>
-          </div>
-          <div class="col">
+         
             <input
               type="text"
-              class="form-control"
+              class="form-control mt-2"
               placeholder="rechercher votre merde"
               v-on:keyup="rechercher"
               v-model="filtre"
             />
-          </div>
+        
         </div>
       </div>
     </div>
@@ -146,8 +143,8 @@
       </div>
 
       <div class="row">
-        <div v-for="item in this.insultes" v-bind:key="item._id" class="pt-3">
-          <div class="pl-3 pb-2">
+        <div v-for="item in this.insultes" v-bind:key="item._id" class="pt-2">
+          <div class="pr-2">
             <Insulte v-bind:Insulte="item"></Insulte>
           </div>
         </div>
