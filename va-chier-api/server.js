@@ -10,7 +10,8 @@ var whitelist = [
   "http://localhost:8081",
   "http://localhost:8082",
   "http://localhost:8083",
-  "http://cuntcock.com"
+  "http://cuntcock.com",
+  "http://va-chier.com"
 ];
 var corsOptions = {
   credentials: true,
