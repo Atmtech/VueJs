@@ -1,0 +1,57 @@
+
+exports.ObtenirStanding = async function(req, res) {
+  var anneeSaison = queryString.ObtenirAnneeSaison(req);
+  axios
+    .get(
+      "https://statsapi.web.nhl.com/api/v1/standings?season=" +
+        anneeSaison +
+        "&expand=standings.record"
+    )
+    .then(function(response) {
+      res.send(response.data);
+    });
+};
+
+var ObtenirScheduleInterne = async function(dateDebut, dateFin) {
+  var test = null;
+  axios
+    .get(
+      "https://statsapi.web.nhl.com/api/v1/standings?startDate=" +
+        dateDebut +
+        "&endDate=" +
+        dateFin +
+        "&expand=schedule.teams"
+    )
+    .then(function(response) {
+      test = response.data;
+    })
+    .finally(function(response) {
+      return "ARK";
+    });
+  console.log(test);
+};
+
+exports.ObtenirSchedule = function(req, res) {
+  var dateDebut = queryString.ObtenirDateDebut(req);
+  var dateFin = queryString.ObtenirDateFin(req);
+
+  ObtenirScheduleInterne(dateDebut, dateFin).then(function(resultat) {
+    console.log(resultat);
+    res.send(resultat);
+  });
+};
+
+var ObtenirPrediction = function() {
+  const options = {
+    page: 1,
+    limit: 1000,
+    collation: {
+      locale: "en"
+    }
+  };
+
+  Prediction.paginate({}, options, function(err, result) {
+    console.log(result.docs);
+    return result.docs;
+  });
+};
