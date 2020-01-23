@@ -1,7 +1,7 @@
 <template>
   <div
     class="container bg-info"
-    style="padding-top: 25px; padding-bottom: 25px;"
+    style="padding-top: 25px; padding-bottom: 5px;"
   >
     <div>
       <table class="table table-dark">

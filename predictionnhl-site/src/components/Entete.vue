@@ -5,8 +5,8 @@
         <div class="col-0">
           <img src="../assets/nhl.png" style="width: 50px" />
         </div>
-        <div class="col-8"><h2 style="color:white;">PredictionNHL</h2></div>
-        <div class="col-3">
+        <div class="col-9"><h2 style="color:white;">PredictionNHL</h2></div>
+        <div class="col-2">
           <button
             type="submit"
             class="btn btn-primary btn-block"

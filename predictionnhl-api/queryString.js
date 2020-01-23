@@ -13,6 +13,7 @@ var ObtenirGamePk = function (req) { return ObtenirParametre(req, "GamePk"); }
 var ObtenirMotPasse = function (req) { return ObtenirParametre(req, "MotPasse"); }
 var ObtenirPointageLocal = function (req) { return ObtenirParametre(req, "PointageLocal"); }
 var ObtenirPointageVisiteur = function (req) { return ObtenirParametre(req, "PointageVisiteur"); }
+var ObtenirEquipe = function (req) { return ObtenirParametre(req, "Equipe"); }
 
 module.exports = {
     ObtenirAnneeSaison: ObtenirAnneeSaison,
@@ -23,6 +24,7 @@ module.exports = {
     ObtenirMotPasse:ObtenirMotPasse,
     ObtenirPointageLocal: ObtenirPointageLocal,
     ObtenirPointageVisiteur:ObtenirPointageVisiteur,
+    ObtenirEquipe:ObtenirEquipe,
 
 }
 

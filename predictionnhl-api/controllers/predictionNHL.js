@@ -17,6 +17,45 @@ function trouverGame(listeGame, gamePk) {
   return retour;
 }
 
+exports.ObtenirStanding = function(req, res) {
+  var idEquipe = queryString.ObtenirEquipe(req);
+  var url = "https://statsapi.web.nhl.com/api/v1/teams/" + idEquipe + "/stats";
+  axios.get(url).then(function(response) {
+    //  console.log(response.data.stats[0])
+    res.send(response.data.stats);
+  });
+};
+
+exports.ObtenirListeDatePrediction = function(req, res) {
+  var start = new Date("10/01/2019");
+  var end = new Date("04/04/2020");
+
+  var daysOfYear = [];
+  var loop = new Date(start);
+
+  while (loop <= end) {
+    var newDate = loop.setDate(loop.getDate() + 1);
+    loop = new Date(newDate);
+    if (loop.getDay() == 6) {
+      var dd = loop.getDate();
+
+      var mm = loop.getMonth() + 1;
+      var yyyy = loop.getFullYear();
+      if (dd < 10) {
+        dd = "0" + dd;
+      }
+
+      if (mm < 10) {
+        mm = "0" + mm;
+      }
+      dateAjouter = yyyy + "-" + mm + "-" + dd;
+      daysOfYear.push(dateAjouter);
+    }
+  }
+
+  res.send(daysOfYear);
+};
+
 exports.ObtenirGame = function(req, res) {
   var dateDebut = queryString.ObtenirDateDebut(req);
   var url =
@@ -25,15 +64,32 @@ exports.ObtenirGame = function(req, res) {
     "&endDate=" +
     dateDebut +
     "&expand=schedule.teams";
+
   axios.get(url).then(function(response) {
     var listeNhl = response.data.dates;
-    res.send(listeNhl[0].games);
+    var games = listeNhl[0].games;
+    var retour = [];
+    games.forEach(element => {
+      var dateGameOfficielle = element.gameDate.substring(
+        0,
+        element.gameDate.indexOf("T")
+      );
+      if (dateGameOfficielle == dateDebut) {
+        retour.push(element);
+      } else {
+        console.log(dateGameOfficielle + " :: " + dateDebut);
+      }
+    });
+    res.send(retour);
   });
 };
 exports.ObtenirPrediction = function(req, res) {
   var courriel = queryString.ObtenirCourriel(req);
-  Prediction.find({"Utilisateur.Courriel":courriel}).exec(function(err, docs) {
-    res.send(docs)
+  Prediction.find({ "Utilisateur.Courriel": courriel }).exec(function(
+    err,
+    docs
+  ) {
+    res.send(docs);
   });
 };
 
@@ -41,10 +97,13 @@ exports.EnregistrerPrediction = function(req, res) {
   var gamePk = queryString.ObtenirGamePk(req);
   var courriel = queryString.ObtenirCourriel(req);
   var pointageLocal = queryString.ObtenirPointageLocal(req);
-  var pointageVisiteur =  queryString.ObtenirPointageVisiteur(req);
-  
-  Prediction.find({"Utilisateur.Courriel":courriel}).exec(function(err, docs) {
-    res.send(docs)
+  var pointageVisiteur = queryString.ObtenirPointageVisiteur(req);
+
+  Prediction.find({ "Utilisateur.Courriel": courriel }).exec(function(
+    err,
+    docs
+  ) {
+    res.send(docs);
   });
 };
 
