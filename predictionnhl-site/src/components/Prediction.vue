@@ -1,43 +1,71 @@
 <template>
-  <div class="card bg-dark text-white" style="width: 16.93rem">
+  <div
+    class="card"
+    v-bind:class="[couleurTexte, couleurFond]"
+    style="width: 16.93rem"
+  >
     <div class="card-body">
-      <h6 class="card-title text-center">
-        {{ NomVisiteur }} @ {{ NomLocal }} ({{ Heure }}) <br />{{ NomArena }}
-      </h6>
-
-      <table style="width:100%" class="text-center">
-        <tr>
-          <td>
-            <h3>{{ PointageVisiteur }}</h3>
-          </td>
-          <td>
-            <img v-bind:src="'../logo/' + LogoVisiteur" style="width: 3em;" />
-          </td>
-          <td>@</td>
-          <td>
-            <img v-bind:src="'../logo/' + LogoLocal" style="width: 3em;" />
-          </td>
-          <td>
-            <h3>{{ PointageLocal }}</h3>
-          </td>
-        </tr>
-      </table>
-
       <div class="row">
-        <div class="col-6">
-          <!-- :readonly="cat_id >= 1" -->
+        <div class="col  text-center">
+          <div
+            style="background-color:white; border-radius: 50%;    width: 3em;    height: 3em; "
+          >
+            <img v-bind:src="'../logo/' + LogoVisiteur" style="width: 3em;" />
+          </div>
+        </div>
+        <div class="col">
+          <h6>({{ Heure }})</h6>
+        </div>
+        <div class="col text-center">
+          <div
+            style="background-color:white; border-radius: 50%;    width: 3em;    height: 3em; "
+          >
+            <img v-bind:src="'../logo/' + LogoLocal" style="width: 3em;" />
+          </div>
+        </div>
+      </div>
+      <div class="row text-center font-weight-bold">
+        <div class="col">{{ NomVisiteur }} vs. {{ NomLocal }}</div>
+      </div>
+      <div class="row text-center small">
+        <div class="col">
+          {{ NomArena }}
+        </div>
+      </div>
+      <div class="row text-center font-weight-bold">
+        <div class="col">
+          <h3>{{ PointageVisiteur }}</h3>
+        </div>
+        <div class="col">
+          -
+        </div>
+        <div class="col">
+          <h3>{{ PointageLocal }}</h3>
+        </div>
+      </div>
+
+      <div class="row text-center font-weight-bold">
+        <div class="col">
           <input
-            class="form-control  bg-dark text-white text-center"
+            class="form-control bg-dark text-white text-center display-4"
             v-model="PredictionVisiteur"
+            style="width:50px;"
+            v-on:change="save($event)"
           />
         </div>
-        <div class="col-6">
+        <div class="col">
+          -
+        </div>
+        <div class="col">
           <input
-            class="form-control  bg-dark text-white text-center"
+            class="form-control bg-dark text-white text-center"
             v-model="PredictionLocal"
+            style="width:50px;"
+            v-on:change="save($event)"
           />
         </div>
       </div>
+
       <div class="row pt-2">
         <div style="font-size: 0.75em;">
           <table class="table  table-dark  table-sm" style="width:100%;">
@@ -54,10 +82,14 @@
             </tr>
             <tr>
               <td>
+                  <div
+                  style="background-color:white; border-radius: 50%;    width: 2em;    height: 2em; "
+                >
                 <img
                   v-bind:src="'../logo/' + LogoVisiteur"
-                  style="width: 2em;"
+                  style="width: 2em;" v-bind:alt="NomVisiteur"
                 />
+                </div>
               </td>
               <td>{{ RangVisiteur }}</td>
               <td>{{ MatchJoueVisiteur }}</td>
@@ -70,7 +102,14 @@
             </tr>
             <tr>
               <td>
-                <img v-bind:src="'../logo/' + LogoLocal" style="width: 2em;" />
+                <div
+                  style="background-color:white; border-radius: 50%;    width: 2em;    height: 2em; "
+                >
+                  <img
+                    v-bind:src="'../logo/' + LogoLocal"
+                    style="width: 2em;"
+                  />
+                </div>
               </td>
               <td>{{ RangLocal }}</td>
               <td>{{ MatchJoueLocal }}</td>
@@ -85,9 +124,41 @@
         </div>
       </div>
       <div class="row">
-        <button type="submit" class="btn btn-primary btn-block">
+        <button
+          type="submit"
+          class="btn btn-primary btn-block"
+          v-on:click="afficher"
+        >
           LES AUTRES PRÉDICTIONS
         </button>
+      </div>
+      <div class="row pt-2" v-if="estAfficher">
+        <div class="pl-1 pr-1" style="font-size: 0.75em;">
+          <table class="table  table-dark  table-sm" style="width:100%;">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Visiteur</th>
+                <th>Local</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody
+              v-for="prediction in predictions"
+              v-bind:key="prediction._id"
+            >
+              <td>
+                {{
+                  prediction.Utilisateur.Prenom +
+                    " " +
+                    prediction.Utilisateur.Nom
+                }}
+              </td>
+              <td>{{ prediction.PointageVisiteur }}</td>
+              <td>{{ prediction.PointageLocal }}</td>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -99,16 +170,19 @@ export default {
   props: ["Game"],
   data: function() {
     return {
+      predictions: [],
+      couleurTexte: "text-white",
+      couleurFond: "bg-secondary",
       GamePk: "tamere",
       Heure: "19:00",
       LogoVisiteur: "anaheim.png",
       LogoLocal: "toronto.png",
       NomVisiteur: "Anaheim",
       NomLocal: "Toronto",
-      PointageVisiteur: 3,
-      PointageLocal: 5,
+      PointageVisiteur: 0,
+      PointageLocal: 0,
       PredictionVisiteur: 0,
-      PredictionLocal: 1,
+      PredictionLocal: 0,
       NomArena: "Centre bell",
       RangVisiteur: "12th",
       RangLocal: "12th",
@@ -125,37 +199,85 @@ export default {
       PointVisiteur: "10",
       PointLocal: "10",
       StreakVisiteur: "10",
-      StreakLocal: "10"
+      StreakLocal: "10",
+      estAfficher: false
     };
   },
   mounted() {
+    this.GamePk = this.Game.gamePk;
 
-      // eslint-disable-next-line no-console
-      console.log(this.Game.gameDate);
+    this.PointageVisiteur = this.Game.teams.away.score;
+    this.PointageLocal = this.Game.teams.home.score;
 
-    // this.GamePk = this.Game.gamePk;
-    // this.PointageVisiteur = this.Game.teams.away.score;
-    // this.PointageLocal = this.Game.teams.home.score;
-    // this.NomArena = this.Game.teams.home.team.venue.name;
-    // var dateGame = new Date(this.Game.gameDate);
+    this.NomArena = this.Game.teams.home.team.venue.name;
+    var dateGame = new Date(this.Game.gameDate);
 
-    // this.LogoVisiteur = this.trouverLogo(this.Game.teams.away.team.id);
-    // this.LogoLocal = this.trouverLogo(this.Game.teams.home.team.id);
+    this.LogoVisiteur = this.trouverLogo(this.Game.teams.away.team.id);
+    this.LogoLocal = this.trouverLogo(this.Game.teams.home.team.id);
 
-    // var minute = dateGame.getMinutes();
-    // if (dateGame.getMinutes() < 10) {
-    //   minute = "0" + dateGame.getMinutes();
-    // }
-    // this.Heure = dateGame.getHours() + ":" + minute;
-
-    // this.trouverStats(this.Game.teams.away.team.id);
-    // this.trouverStats(this.Game.teams.home.team.id);
+    var minute = dateGame.getMinutes();
+    if (dateGame.getMinutes() < 10) {
+      minute = "0" + dateGame.getMinutes();
+    }
+    this.Heure = dateGame.getHours() + ":" + minute;
+    this.trouverStats(this.Game.teams.away.team.id);
+    this.trouverStats(this.Game.teams.home.team.id);
+    this.obtenirPrediction(this.Game.gamePk);
   },
   methods: {
-    obtenirPrediction:function(gamePk)
-    {
-        // eslint-disable-next-line no-console
-        console.log(gamePk);
+    afficher: function() {
+      if (this.estAfficher) {
+        this.estAfficher = false;
+      } else {
+        this.estAfficher = true;
+      }
+    },
+    save: function() {
+      if (this.PredictionVisiteur != "" && this.PredictionLocal != "") {
+        Services.exec("EnregistrerPrediction", this.$store.state, {
+          PredictionVisiteur: this.PredictionVisiteur,
+          PredictionLocal: this.PredictionLocal,
+          GamePk: this.GamePk
+        });
+      }
+    },
+    obtenirPrediction: function(gamePk) {
+      Services.exec("ObtenirPrediction", this.$store.state, {
+        GamePk: gamePk
+      }).then(response => {
+        this.PredictionVisiteur = response.data.PointageVisiteur;
+        this.PredictionLocal = response.data.PointageLocal;
+
+        var estVisiteurGagnant = false;
+        var estPredictionVisiteurGagnant = false;
+        if (parseInt(this.PointageVisiteur) > parseInt(this.PointageLocal)) {
+          estVisiteurGagnant = true;
+        }
+        if (
+          parseInt(this.PredictionVisiteur) > parseInt(this.PredictionLocal)
+        ) {
+          estPredictionVisiteurGagnant = true;
+        }
+
+        if (estVisiteurGagnant == estPredictionVisiteurGagnant) {
+          this.couleurTexte = "text-black";
+          this.couleurFond = "bg-success";
+        }
+        if (estVisiteurGagnant != estPredictionVisiteurGagnant) {
+          this.couleurTexte = "text-black";
+          this.couleurFond = "bg-danger";
+        }
+
+        if (this.PredictionVisiteur == null || this.PredictionLocal == null) {
+          this.couleurTexte = "text-white";
+          this.couleurFond = "bg-secondary";
+        }
+      });
+      Services.exec("ObtenirToutesPrediction", this.$store.state, {
+        GamePk: gamePk
+      }).then(response => {
+        this.predictions = response.data;
+      });
     },
     trouverStats: function(equipe) {
       if (this.Game.teams.away.team.id == equipe) {

@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 Schema = mongoose.Schema;
+
 connectionPool = require("./db.js").connectionPool;
 
 var utilisateurSchema = new Schema({
@@ -24,7 +25,7 @@ var predictionSchema = new Schema(
 const connectionProduction =
   "mongodb+srv://Tamere:10Crevette01@clustertamere-e1cpu.mongodb.net/PredictionNHL?retryWrites=true&w=majority";
 const connectionLocal = 
-  "mongodb://localhost:27017/PredictionNHL?retryWrites=true&w=majority";
+  "mongodb://localhost:27017/PredictionNHL?retryWrites=true";
 
 exports.PredictionFactory = function() {
   var conn = connectionPool.getConnection(

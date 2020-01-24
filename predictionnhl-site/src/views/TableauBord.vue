@@ -23,21 +23,13 @@
       <select
         class="form-control bg-dark text-white"
         v-model="datePredictionSelectionne"
-        @change="onChangeDatePrediction($event)"
+        @change="onChangeDatePrediction()"
       >
         <option v-for="dateItem in datePrediction" v-bind:key="dateItem">
           {{ dateItem }}
         </option>
       </select>
-      <div class="row pt-3 pl-3 pr-3">
-        <!-- <button
-          type="submit"
-          class="btn btn-primary btn-block"
-          v-on:click="enregistrer"
-        >
-          ENREGISTRER
-        </button> -->
-      </div>
+     
       <div class="row pl-3">
         <div
           v-for="item in this.listeGame"
@@ -46,7 +38,6 @@
         >
           <div class="pr-2">
             <Prediction v-bind:Game="item"></Prediction>
-            <!-- <Insulte v-bind:Insulte="item"></Insulte> -->
           </div>
         </div>
       </div>
@@ -74,17 +65,15 @@ export default {
     };
   },
   methods: {
-    onChangeDatePrediction: function(event) {
+    onChangeDatePrediction: function() {
+      this.rafraichir();
+    },
+    rafraichir: function() {
       Services.exec("ObtenirGame", this.$store.state, {
-        DateDebut: event.target.value
+        DateDebut: this.datePredictionSelectionne
       }).then(response => {
-
-        // eslint-disable-next-line no-console
-        console.log(event.target.value)
         this.listeGame = response.data;
       });
-
-      //alert(event.target.value);
     }
   },
   mounted() {
