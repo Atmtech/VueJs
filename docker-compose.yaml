@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   nginx-proxy:
@@ -23,3 +23,11 @@ services:
     image: api.prediction-nhl.com
     environment:
       - VIRTUAL_HOST=api.cuntcock.com
+  prediction-nhl:
+    image: site.prediction-nhl.com
+    environment:
+      - VIRTUAL_HOST=predictionnhl.etouelle.com
+  api-prediction-nhl:
+    image: api.prediction-nhl.com
+    environment:
+      - VIRTUAL_HOST=api-predictionnhl.etouelle.com
