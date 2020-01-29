@@ -10,9 +10,8 @@ var whitelist = [
   "http://localhost:8081",
   "http://localhost:8082",
   "http://localhost:8083",
-  "http://localhost:20100",
   "http://cuntcock.com",
-  "http://etouelle.com"
+  "http://va-chier.com"
 ];
 var corsOptions = {
   credentials: true,
@@ -53,7 +52,7 @@ function main() {
 
   app.listen(port, () => {
     console.log("*******************************************************");
-    console.log("api-prediction-nhl port: " + port);
+    console.log("api port: " + port);
     console.log("*******************************************************");
   });
 }
