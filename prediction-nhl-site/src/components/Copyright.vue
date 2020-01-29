@@ -4,7 +4,7 @@
   >
     <div class="container text-center">
       <h6 class="text-white">
-        © Copyright 2020 PredictionNHL.etouelle.COM - 
+        © Copyright 2020 prediction-nhl 
       </h6>
     </div>
   </div>

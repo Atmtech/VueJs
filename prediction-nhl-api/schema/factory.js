@@ -40,8 +40,8 @@ exports.PredictionFactory = function() {
 
 exports.UtilisateurFactory = function() {
   var conn = connectionPool.getConnection(
-    //connectionProduction,
-     connectionLocal,
+    connectionProduction,
+    // connectionLocal,
     "PredictionNHL"
   );
   var mongoosePaginate = require("mongoose-paginate-v2");
