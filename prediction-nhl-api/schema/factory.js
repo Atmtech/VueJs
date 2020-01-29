@@ -24,13 +24,13 @@ var predictionSchema = new Schema(
 
 const connectionProduction =
   "mongodb+srv://Tamere:10Crevette01@clustertamere-e1cpu.mongodb.net/PredictionNHL?retryWrites=true&w=majority";
-const connectionLocal = 
-  "mongodb://localhost:27017/PredictionNHL?retryWrites=true";
+// const connectionLocal = 
+//   "mongodb://localhost:27017/PredictionNHL?retryWrites=true";
 
 exports.PredictionFactory = function() {
   var conn = connectionPool.getConnection(
-    //connectionProduction,
-     connectionLocal,
+    connectionProduction,
+    // connectionLocal,
     "PredictionNHL"
   );
   var mongoosePaginate = require("mongoose-paginate-v2");

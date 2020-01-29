@@ -52,7 +52,7 @@ function main() {
 
   app.listen(port, () => {
     console.log("*******************************************************");
-    console.log("api port: " + port);
+    console.log("prediction-nhl-api port: " + port);
     console.log("*******************************************************");
   });
 }
