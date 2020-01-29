@@ -28,6 +28,7 @@ export default {
     ) {
       this.estAuthentifie = true;
       this.utilisateur = this.$store.state.courriel;
+      this.$router.push("/TableauBord");
     } else {
       this.estAuthentifie = false;
     }

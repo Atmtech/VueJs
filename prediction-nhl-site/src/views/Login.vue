@@ -72,10 +72,7 @@ export default {
           this.estErreur = true;
           this.messageErreur = "(401) Mauvais courriel ou mot de passed";
         }
-
-        //alert(response.data);
       });
-      //this.$router.push("/TableauBord");
     }
   },
   mounted() {}

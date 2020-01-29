@@ -6,6 +6,9 @@ export default {
       if (href.indexOf("etouelle") >= 0) {
         return "http://api-predictionnhl.etouelle.com/api"
       }
+      if (href.indexOf("cuntcock") >= 0) {
+        return "http://api.cuntcock.com/api"
+      }
     }
   };
   
