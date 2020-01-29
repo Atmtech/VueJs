@@ -16,10 +16,10 @@ services:
     environment:
       - VIRTUAL_HOST=api.va-chier.com
   cuntcock:
-    image: site.va-chier.com
+    image: site.prediction-nhl.com
     environment:
       - VIRTUAL_HOST=cuntcock.com
   api-cuntcock:
-    image: api.va-chier.com
+    image: api.prediction-nhl.com
     environment:
       - VIRTUAL_HOST=api.cuntcock.com

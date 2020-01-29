@@ -1,4 +1,4 @@
-# va-chier-site
+# PredictionNhl
 
 ## Project setup
 ```
