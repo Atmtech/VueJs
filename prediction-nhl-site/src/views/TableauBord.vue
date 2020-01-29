@@ -1,6 +1,9 @@
 <template>
   <Master>
     <div class="container bg-white pt-4 pb-4">
+
+
+      
       <ol class="breadcrumb float-sm-left">
         <li class="breadcrumb-item">
           <router-link to="/#">Accueil</router-link>
@@ -77,6 +80,8 @@ export default {
     }
   },
   mounted() {
+
+
     Services.exec("ObtenirListeDatePrediction", this.$store.state, {}).then(
       response => {
         this.datePrediction = response.data;

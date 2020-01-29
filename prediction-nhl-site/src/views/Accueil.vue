@@ -6,10 +6,16 @@
         données de la NHL.
       </h4>
 
-      <button type="button" class="btn btn-primary" 
+      <button type="button" class="btn btn-primary" v-if="!estAuthentifie"
       v-on:click="login"
       >
         Identifiez vous
+      </button>
+
+      <button type="button" class="btn btn-primary" v-if="estAuthentifie"
+      v-on:click="tableauBord"
+      >
+        Tableau de bord
       </button>
     </div>
   </Master>
@@ -23,13 +29,30 @@ export default {
     Master: () => import("../components/Master.vue")
   },
   data: function() {
-    return {};
+    return {
+      estAuthentifie: false
+    };
   },
   methods: {
+    tableauBord:  function(){
+       this.$router.push("/TableauBord");
+    },
     login: function(){
        this.$router.push("/Login");
     }
   },
-  mounted() {}
+  mounted() {
+    
+ if (
+      this.$store.state.courriel != null &&
+      this.$store.state.courriel != "" &&
+      this.$router.currentRoute.path != "/Login"
+    ) {
+      this.estAuthentifie = true;
+    } else {
+      this.estAuthentifie = false;
+    }
+
+  }
 };
 </script>
