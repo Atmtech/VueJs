@@ -4,6 +4,8 @@ class MatchPrediction {
     this.gamePk = propriete.gamePk;
     this.heure = propriete.heure;
     this.arena = propriete.arena;
+    this.estPossiblePrediction = propriete.estPossiblePrediction;
+    this.estMatchTermine = propriete.estMatchTermine;
     this.equipeVisiteur = propriete.equipeVisiteur;
     this.equipeLocal = propriete.equipeLocal;
     this.pointageVisiteur = propriete.pointageVisiteur;
@@ -13,7 +15,6 @@ class MatchPrediction {
     this.estPredictionGagnante = propriete.estPredictionGagnante;
     this.estPointagePredictionExacte = propriete.estPointagePredictionExacte;
     this.autrePrediction = propriete.autrePrediction;
-    
   }
 }
 module.exports = MatchPrediction;

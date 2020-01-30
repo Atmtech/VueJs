@@ -54,6 +54,7 @@
             v-model="PredictionVisiteur"
             style="width:50px;"
             v-on:change="save($event)"
+            :disabled="estPossiblePrediction == false"
           />
         </div>
         <div class="col">
@@ -69,6 +70,7 @@
             v-model="PredictionLocal"
             style="width:50px;"
             v-on:change="save($event)"
+            :disabled="estPossiblePrediction == false"
           />
         </div>
       </div>
@@ -180,15 +182,8 @@ export default {
     return {
       predictions: [],
       autrePrediction: this.Prediction.autrePrediction,
-      couleurTexte: this.Prediction.estPredictionGagnante
-        ? "text-black"
-        : "text-black",
-      couleurFond: this.Prediction.estPredictionGagnante
-        ? "bg-success"
-        : this.Prediction.pointagePredictionVisiteur == 0 &&
-          this.Prediction.pointagePredictionLocal == 0
-        ? "bg-secondary"
-        : "bg-danger",
+      couleurTexte: "text-black",
+      couleurFond: this.trouverCouleurFond(),
       estPointagePredictionExacte: this.Prediction.estPointagePredictionExacte,
       GamePk: this.Prediction.gamePk,
       Heure: this.Prediction.heure,
@@ -217,11 +212,32 @@ export default {
       PointLocal: this.Prediction.equipeLocal.points,
       StreakVisiteur: this.Prediction.equipeVisiteur.streak,
       StreakLocal: this.Prediction.equipeLocal.streak,
-      estAfficher: false
+      estAfficher: false,
+      estPossiblePrediction: this.Prediction.estPossiblePrediction,
     };
   },
   mounted() {},
   methods: {
+    trouverCouleurFond() {
+      var couleur = "bg-secondary";
+      if (this.Prediction.estPossiblePrediction){
+        couleur = "bg-secondary";
+      } else
+      {
+        if (this.Prediction.estMatchTermine)
+        {
+          if (this.Prediction.estPredictionGagnante)
+          {
+            couleur = "bg-success";
+          }
+          else {
+            couleur = "bg-danger";
+          }
+        }
+      }
+      return couleur;
+    },
+
     afficher: function() {
       if (this.estAfficher) {
         this.estAfficher = false;

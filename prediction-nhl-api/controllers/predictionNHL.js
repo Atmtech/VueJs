@@ -165,6 +165,7 @@ exports.ObtenirListePrediction = function(req, res) {
                   standing,
                   element.teams.home.team.id
                 );
+                
                 let equipeVisiteur = new Equipe({
                   id: element.teams.away.team.id,
                   nom: element.teams.away.team.name,
@@ -228,6 +229,8 @@ exports.ObtenirListePrediction = function(req, res) {
                       : "",
                   autrePrediction: autrePrediction,
                   arena: element.venue.name,
+                  estPossiblePrediction: element.status.codedGameState == "1",
+                  estMatchTermine: element.status.codedGameState == "7"
                 });
 
                 match.estPredictionGagnante = EstPredictionGagnante(
@@ -277,7 +280,8 @@ exports.ObtenirListeDatePrediction = function(req, res) {
         mm = "0" + mm;
       }
       dateAjouter = yyyy + "-" + mm + "-" + dd;
-      daysOfYear.push(dateAjouter);
+      if (dateAjouter != "2020-01-25")
+        daysOfYear.push(dateAjouter);
     }
   }
 

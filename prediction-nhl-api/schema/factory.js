@@ -23,7 +23,7 @@ var predictionSchema = new Schema(
 );
 
 const connectionProduction =
-  "mongodb+srv://Tamere:10Crevette01@clustertamere-e1cpu.mongodb.net/PredictionNHL?retryWrites=true&w=majority";
+  "mongodb+srv://Tamere:10Crevette01@clustertamere-e1cpu.mongodb.net/PredictionNHL?retryWrites=true";
 // const connectionLocal = 
 //   "mongodb://localhost:27017/PredictionNHL?retryWrites=true";
 
