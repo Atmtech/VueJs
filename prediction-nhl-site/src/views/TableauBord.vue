@@ -35,12 +35,12 @@
      
       <div class="row pl-3">
         <div
-          v-for="item in this.listeGame"
+          v-for="item in this.listePrediction"
           v-bind:key="item.gamePk"
           class="pt-2"
         >
           <div class="pr-2">
-            <Prediction v-bind:Game="item"></Prediction>
+            <Prediction v-bind:Prediction="item"></Prediction>
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default {
       estErreur: false,
       datePrediction: [],
       datePredictionSelectionne: "",
-      listeGame: []
+      listePrediction: []
     };
   },
   methods: {
@@ -72,16 +72,14 @@ export default {
       this.rafraichir();
     },
     rafraichir: function() {
-      Services.exec("ObtenirGame", this.$store.state, {
+      Services.exec("ObtenirListePrediction", this.$store.state, {
         DateDebut: this.datePredictionSelectionne
       }).then(response => {
-        this.listeGame = response.data;
+        this.listePrediction = response.data;
       });
     }
   },
   mounted() {
-
-
     Services.exec("ObtenirListeDatePrediction", this.$store.state, {}).then(
       response => {
         this.datePrediction = response.data;

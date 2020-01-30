@@ -5,6 +5,16 @@
     style="width: 16.93rem"
   >
     <div class="card-body">
+      <div class="row text-center font-weight-bold">
+        <div class="col" style="font-size:1em;">
+          {{ NomVisiteur }} <br />
+          @<br />
+          {{ NomLocal }}
+        </div>
+      </div>
+      <div class="row text-center small">
+        <div class="col">({{ NomArena }})</div>
+      </div>
       <div class="row">
         <div class="col  text-center">
           <div
@@ -24,14 +34,7 @@
           </div>
         </div>
       </div>
-      <div class="row text-center font-weight-bold">
-        <div class="col">{{ NomVisiteur }} vs. {{ NomLocal }}</div>
-      </div>
-      <div class="row text-center small">
-        <div class="col">
-          {{ NomArena }}
-        </div>
-      </div>
+
       <div class="row text-center font-weight-bold">
         <div class="col">
           <h3>{{ PointageVisiteur }}</h3>
@@ -54,7 +57,11 @@
           />
         </div>
         <div class="col">
-          -
+          <img
+            src="../assets/star-icon.png"
+            style="width:25px"
+            v-if="estPointagePredictionExacte"
+          />
         </div>
         <div class="col">
           <input
@@ -82,13 +89,14 @@
             </tr>
             <tr>
               <td>
-                  <div
+                <div
                   style="background-color:white; border-radius: 50%;    width: 2em;    height: 2em; "
                 >
-                <img
-                  v-bind:src="'../logo/' + LogoVisiteur"
-                  style="width: 2em;" v-bind:alt="NomVisiteur"
-                />
+                  <img
+                    v-bind:src="'../logo/' + LogoVisiteur"
+                    style="width: 2em;"
+                    v-bind:alt="NomVisiteur"
+                  />
                 </div>
               </td>
               <td>{{ RangVisiteur }}</td>
@@ -144,7 +152,7 @@
               </tr>
             </thead>
             <tbody
-              v-for="prediction in predictions"
+              v-for="prediction in autrePrediction"
               v-bind:key="prediction._id"
             >
               <td>
@@ -167,63 +175,52 @@
 import Services from "../services/services";
 
 export default {
-  props: ["Game"],
+  props: ["Prediction"],
   data: function() {
     return {
       predictions: [],
-      couleurTexte: "text-white",
-      couleurFond: "bg-secondary",
-      GamePk: "tamere",
-      Heure: "19:00",
-      LogoVisiteur: "anaheim.png",
-      LogoLocal: "toronto.png",
-      NomVisiteur: "Anaheim",
-      NomLocal: "Toronto",
-      PointageVisiteur: 0,
-      PointageLocal: 0,
-      PredictionVisiteur: 0,
-      PredictionLocal: 0,
-      NomArena: "Centre bell",
-      RangVisiteur: "12th",
-      RangLocal: "12th",
-      MatchJoueVisiteur: "12",
-      MatchJoueLocal: "12",
-      VictoireVisiteur: "10",
-      VictoireLocal: "10",
-      DefaiteVisiteur: "10",
-      DefaiteLocal: "10",
-      ButContreVisiteur: "10",
-      ButContreLocal: "10",
-      ButProduitVisiteur: "10",
-      ButProduitLocal: "10",
-      PointVisiteur: "10",
-      PointLocal: "10",
-      StreakVisiteur: "10",
-      StreakLocal: "10",
+      autrePrediction: this.Prediction.autrePrediction,
+      couleurTexte: this.Prediction.estPredictionGagnante
+        ? "text-black"
+        : "text-black",
+      couleurFond: this.Prediction.estPredictionGagnante
+        ? "bg-success"
+        : this.Prediction.pointagePredictionVisiteur == 0 &&
+          this.Prediction.pointagePredictionLocal == 0
+        ? "bg-secondary"
+        : "bg-danger",
+      estPointagePredictionExacte: this.Prediction.estPointagePredictionExacte,
+      GamePk: this.Prediction.gamePk,
+      Heure: this.Prediction.heure,
+      LogoVisiteur: this.Prediction.equipeVisiteur.logo,
+      LogoLocal: this.Prediction.equipeLocal.logo,
+      NomVisiteur: this.Prediction.equipeVisiteur.nom,
+      NomLocal: this.Prediction.equipeLocal.nom,
+      PointageVisiteur: this.Prediction.pointageVisiteur,
+      PointageLocal: this.Prediction.pointageLocal,
+      PredictionVisiteur: this.Prediction.pointagePredictionVisiteur,
+      PredictionLocal: this.Prediction.pointagePredictionLocal,
+      NomArena: this.Prediction.arena,
+      RangVisiteur: this.Prediction.equipeVisiteur.position,
+      RangLocal: this.Prediction.equipeLocal.position,
+      MatchJoueVisiteur: this.Prediction.equipeVisiteur.matchJoue,
+      MatchJoueLocal: this.Prediction.equipeLocal.matchJoue,
+      VictoireVisiteur: this.Prediction.equipeVisiteur.gagne,
+      VictoireLocal: this.Prediction.equipeLocal.gagne,
+      DefaiteVisiteur: this.Prediction.equipeVisiteur.perdu,
+      DefaiteLocal: this.Prediction.equipeLocal.perdu,
+      ButContreVisiteur: this.Prediction.equipeVisiteur.butContre,
+      ButContreLocal: this.Prediction.equipeLocal.butContre,
+      ButProduitVisiteur: this.Prediction.equipeVisiteur.butCompte,
+      ButProduitLocal: this.Prediction.equipeLocal.butCompte,
+      PointVisiteur: this.Prediction.equipeVisiteur.points,
+      PointLocal: this.Prediction.equipeLocal.points,
+      StreakVisiteur: this.Prediction.equipeVisiteur.streak,
+      StreakLocal: this.Prediction.equipeLocal.streak,
       estAfficher: false
     };
   },
-  mounted() {
-    this.GamePk = this.Game.gamePk;
-
-    this.PointageVisiteur = this.Game.teams.away.score;
-    this.PointageLocal = this.Game.teams.home.score;
-
-    this.NomArena = this.Game.teams.home.team.venue.name;
-    var dateGame = new Date(this.Game.gameDate);
-
-    this.LogoVisiteur = this.trouverLogo(this.Game.teams.away.team.id);
-    this.LogoLocal = this.trouverLogo(this.Game.teams.home.team.id);
-
-    var minute = dateGame.getMinutes();
-    if (dateGame.getMinutes() < 10) {
-      minute = "0" + dateGame.getMinutes();
-    }
-    this.Heure = dateGame.getHours() + ":" + minute;
-    this.trouverStats(this.Game.teams.away.team.id);
-    this.trouverStats(this.Game.teams.home.team.id);
-    this.obtenirPrediction(this.Game.gamePk);
-  },
+  mounted() {},
   methods: {
     afficher: function() {
       if (this.estAfficher) {
@@ -240,126 +237,6 @@ export default {
           GamePk: this.GamePk
         });
       }
-    },
-    obtenirPrediction: function(gamePk) {
-      Services.exec("ObtenirPrediction", this.$store.state, {
-        GamePk: gamePk
-      }).then(response => {
-        this.PredictionVisiteur = response.data.PointageVisiteur;
-        this.PredictionLocal = response.data.PointageLocal;
-
-        var estVisiteurGagnant = false;
-        var estPredictionVisiteurGagnant = false;
-        if (parseInt(this.PointageVisiteur) > parseInt(this.PointageLocal)) {
-          estVisiteurGagnant = true;
-        }
-        if (
-          parseInt(this.PredictionVisiteur) > parseInt(this.PredictionLocal)
-        ) {
-          estPredictionVisiteurGagnant = true;
-        }
-
-        if (estVisiteurGagnant == estPredictionVisiteurGagnant) {
-          this.couleurTexte = "text-black";
-          this.couleurFond = "bg-success";
-        }
-        if (estVisiteurGagnant != estPredictionVisiteurGagnant) {
-          this.couleurTexte = "text-black";
-          this.couleurFond = "bg-danger";
-        }
-
-        if (this.PredictionVisiteur == null || this.PredictionLocal == null) {
-          this.couleurTexte = "text-white";
-          this.couleurFond = "bg-secondary";
-        }
-      });
-      Services.exec("ObtenirToutesPrediction", this.$store.state, {
-        GamePk: gamePk
-      }).then(response => {
-        this.predictions = response.data;
-      });
-    },
-    trouverStats: function(equipe) {
-      if (this.Game.teams.away.team.id == equipe) {
-        Services.exec("ObtenirStanding", this.$store.state, {
-          Equipe: this.Game.teams.away.team.id
-        }).then(response => {
-          response.data.forEach(element => {
-            if (element.type.displayName == "statsSingleSeason") {
-              this.MatchJoueVisiteur = element.splits[0].stat.gamesPlayed;
-              this.VictoireVisiteur = element.splits[0].stat.wins;
-              this.DefaiteVisiteur = element.splits[0].stat.losses;
-
-              this.PointVisiteur = element.splits[0].stat.pts;
-              this.StreakVisiteur = "...";
-            }
-            if (element.type.displayName == "regularSeasonStatRankings") {
-              this.RangVisiteur = element.splits[0].stat.pts;
-              this.ButContreVisiteur =
-                element.splits[0].stat.goalsAgainstPerGame;
-              this.ButProduitVisiteur = element.splits[0].stat.goalsPerGame;
-            }
-          });
-        });
-      } else {
-        Services.exec("ObtenirStanding", this.$store.state, {
-          Equipe: this.Game.teams.home.team.id
-        }).then(response => {
-          response.data.forEach(element => {
-            if (element.type.displayName == "statsSingleSeason") {
-              this.MatchJoueLocal = element.splits[0].stat.gamesPlayed;
-              this.VictoireLocal = element.splits[0].stat.wins;
-              this.DefaiteLocal = element.splits[0].stat.losses;
-
-              this.PointLocal = element.splits[0].stat.pts;
-              this.StreakLocal = "...";
-            }
-            if (element.type.displayName == "regularSeasonStatRankings") {
-              this.RangLocal = element.splits[0].stat.pts;
-              this.ButContreLocal = element.splits[0].stat.goalsAgainstPerGame;
-              this.ButProduitLocal = element.splits[0].stat.goalsPerGame;
-            }
-          });
-        });
-      }
-    },
-    trouverLogo: function(equipe) {
-      var image = "";
-
-      if (equipe == "1") image = "newjersey.png";
-      if (equipe == "2") image = "islanders.png";
-      if (equipe == "3") image = "rangers.png";
-      if (equipe == "4") image = "philadelphia.png";
-      if (equipe == "5") image = "pittsburgh.png";
-      if (equipe == "6") image = "boston.png";
-      if (equipe == "7") image = "buffalo.png";
-      if (equipe == "8") image = "montreal.png";
-      if (equipe == "9") image = "ottawa.png";
-      if (equipe == "10") image = "toronto.png";
-      if (equipe == "11") image = "???.png";
-      if (equipe == "12") image = "carolina.png";
-      if (equipe == "13") image = "florida.png";
-      if (equipe == "14") image = "tampabay.png";
-      if (equipe == "15") image = "washington.png";
-      if (equipe == "16") image = "chicago.png";
-      if (equipe == "17") image = "detroit.png";
-      if (equipe == "18") image = "nashville.png";
-      if (equipe == "19") image = "stlouis.png";
-      if (equipe == "20") image = "calgary.png";
-      if (equipe == "21") image = "colorado.png";
-      if (equipe == "22") image = "edmonton.png";
-      if (equipe == "23") image = "vancouver.png";
-      if (equipe == "24") image = "anaheim.png";
-      if (equipe == "25") image = "dallas.png";
-      if (equipe == "26") image = "losangeles.png";
-      if (equipe == "27") image = "arizona.png";
-      if (equipe == "28") image = "sanjose.png";
-      if (equipe == "29") image = "columbus.png";
-      if (equipe == "30") image = "minnesota.png";
-      if (equipe == "53") image = "arizona.png";
-      if (equipe == "52") image = "winnipeg.png";
-      if (equipe == "54") image = "vegas.png";
-      return image;
     }
   }
 };

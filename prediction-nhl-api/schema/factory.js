@@ -14,7 +14,7 @@ var utilisateurSchema = new Schema({
 
 var predictionSchema = new Schema(
   {
-    GamePrimaryKey: String,
+    GamePrimaryKey: Number,
     Utilisateur: utilisateurSchema,
     PointageLocal: Number,
     PointageVisiteur: Number

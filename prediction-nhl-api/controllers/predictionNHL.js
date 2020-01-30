@@ -7,7 +7,10 @@ var Prediction = require("../schema/factory.js").PredictionFactory();
 var Utilisateur = require("../schema/factory.js").UtilisateurFactory();
 var Classement = require("../schema/classement");
 
-function trouverGame(listeGame, gamePk) {
+var MatchPrediction = require("../schema/matchprediction");
+var Equipe = require("../schema/equipe");
+
+function TrouverGame(listeGame, gamePk) {
   var retour;
   listeGame.forEach(element => {
     element.games.forEach(game => {
@@ -20,12 +23,235 @@ function trouverGame(listeGame, gamePk) {
   return retour;
 }
 
-exports.ObtenirStanding = function(req, res) {
-  var idEquipe = queryString.ObtenirEquipe(req);
-  var url = "https://statsapi.web.nhl.com/api/v1/teams/" + idEquipe + "/stats";
-  axios.get(url).then(function(response) {
-    res.send(response.data.stats);
+function TrouverStanding(standing, id) {
+  var retour = null;
+  standing[0].teamRecords.forEach(element => {
+    if (element.team.id == id) {
+      retour = element;
+    }
   });
+
+  standing[1].teamRecords.forEach(element => {
+    if (element.team.id == id) {
+      retour = element;
+    }
+  });
+
+  standing[2].teamRecords.forEach(element => {
+    if (element.team.id == id) {
+      retour = element;
+    }
+  });
+
+  standing[3].teamRecords.forEach(element => {
+    if (element.team.id == id) {
+      retour = element;
+    }
+  });
+  return retour;
+}
+
+function TrouverLogo(equipe) {
+  var image = "";
+  if (equipe == "1") image = "newjersey.png";
+  if (equipe == "2") image = "islanders.png";
+  if (equipe == "3") image = "rangers.png";
+  if (equipe == "4") image = "philadelphia.png";
+  if (equipe == "5") image = "pittsburgh.png";
+  if (equipe == "6") image = "boston.png";
+  if (equipe == "7") image = "buffalo.png";
+  if (equipe == "8") image = "montreal.png";
+  if (equipe == "9") image = "ottawa.png";
+  if (equipe == "10") image = "toronto.png";
+  if (equipe == "11") image = "???.png";
+  if (equipe == "12") image = "carolina.png";
+  if (equipe == "13") image = "florida.png";
+  if (equipe == "14") image = "tampabay.png";
+  if (equipe == "15") image = "washington.png";
+  if (equipe == "16") image = "chicago.png";
+  if (equipe == "17") image = "detroit.png";
+  if (equipe == "18") image = "nashville.png";
+  if (equipe == "19") image = "stlouis.png";
+  if (equipe == "20") image = "calgary.png";
+  if (equipe == "21") image = "colorado.png";
+  if (equipe == "22") image = "edmonton.png";
+  if (equipe == "23") image = "vancouver.png";
+  if (equipe == "24") image = "anaheim.png";
+  if (equipe == "25") image = "dallas.png";
+  if (equipe == "26") image = "losangeles.png";
+  if (equipe == "27") image = "arizona.png";
+  if (equipe == "28") image = "sanjose.png";
+  if (equipe == "29") image = "columbus.png";
+  if (equipe == "30") image = "minnesota.png";
+  if (equipe == "53") image = "arizona.png";
+  if (equipe == "52") image = "winnipeg.png";
+  if (equipe == "54") image = "vegas.png";
+  return image;
+}
+
+function EstPredictionExacte(prediction, pointageVisiteur, pointageLocal) {
+  var retour = false;
+  if (prediction != null) {
+    if (
+      prediction.PointageVisiteur == pointageVisiteur &&
+      prediction.PointageLocal == pointageLocal
+    ) {
+      retour = true;
+    } else {
+      retour = false;
+    }
+  }
+  return retour;
+}
+function EstPredictionGagnante(prediction, pointageVisiteur, pointageLocal) {
+  var estVisiteurGagnant = false;
+  var estPredictionVisiteurGagnant = false;
+  var retour = false;
+  if (prediction != null) {
+    if (parseInt(pointageVisiteur) > parseInt(pointageLocal)) {
+      estVisiteurGagnant = true;
+    }
+    if (
+      parseInt(prediction.PointageVisiteur) > parseInt(prediction.PointageLocal)
+    ) {
+      estPredictionVisiteurGagnant = true;
+    }
+    if (estVisiteurGagnant == estPredictionVisiteurGagnant) {
+      retour = true;
+    } else {
+      retour = false;
+    }
+    return retour;
+  }
+}
+function TrouverHeure(element) {
+  var dateGame = new Date(element.gameDate);
+  var minute = dateGame.getMinutes();
+  if (dateGame.getMinutes() < 10) {
+    minute = "0" + dateGame.getMinutes();
+  }
+  return dateGame.getHours() + ":" + minute;
+}
+
+exports.ObtenirListePrediction = function(req, res) {
+  var dateDebut = queryString.ObtenirDateDebut(req);
+  var courriel = queryString.ObtenirCourriel(req);
+
+  var tableau = [];
+  var url = "https://statsapi.web.nhl.com/api/v1/schedule?date=" + dateDebut;
+
+  axios
+    .get("https://statsapi.web.nhl.com/api/v1/standings")
+    .then(function(response) {
+      var standing = response.data.records;
+      axios.get(url).then(function(response) {
+        if (response.data.dates[0] != null) {
+          var listeMatch = response.data.dates[0].games;
+          var listeGamePk = [];
+          listeMatch.forEach(element => {
+            listeGamePk.push(element.gamePk.toString());
+          });
+          Prediction.find(
+            {
+              GamePrimaryKey: { $in: listeGamePk }
+            },
+            function(err, listePrediction) {
+              listeMatch.forEach(element => {
+                var standingVisiteur = TrouverStanding(
+                  standing,
+                  element.teams.away.team.id
+                );
+                var standingLocal = TrouverStanding(
+                  standing,
+                  element.teams.home.team.id
+                );
+                let equipeVisiteur = new Equipe({
+                  id: element.teams.away.team.id,
+                  nom: element.teams.away.team.name,
+                  gagne: standingVisiteur.leagueRecord.wins,
+                  perdu: standingVisiteur.leagueRecord.losses,
+                  points: standingVisiteur.points,
+                  position: standingVisiteur.leagueRank,
+                  matchJoue: standingVisiteur.gamesPlayed,
+                  streak: standingVisiteur.streak.streakCode,
+                  butCompte: standingVisiteur.goalsScored,
+                  butContre: standingVisiteur.goalsAgainst,
+                  logo: TrouverLogo(element.teams.away.team.id),
+                  
+                });
+                let equipeLocal = new Equipe({
+                  id: element.teams.home.team.id,
+                  nom: element.teams.home.team.name,
+                  gagne: standingLocal.leagueRecord.wins,
+                  perdu: standingLocal.leagueRecord.losses,
+                  points: standingLocal.points,
+                  position: standingLocal.leagueRank,
+                  matchJoue: standingLocal.gamesPlayed,
+                  streak: standingLocal.streak.streakCode,
+                  butCompte: standingLocal.goalsScored,
+                  butContre: standingLocal.goalsAgainst,
+                  logo: TrouverLogo(element.teams.home.team.id)
+                });
+
+                var predictionMatchUtilisateur = listePrediction.find(
+                  x =>
+                    x.Utilisateur.Courriel == courriel &&
+                    x.GamePrimaryKey == element.gamePk
+                );
+
+                var utilisateur = null;
+                if (predictionMatchUtilisateur != null) {
+                  if (predictionMatchUtilisateur.Utilisateur != null) {
+                    utilisateur = predictionMatchUtilisateur.Utilisateur;
+                  }
+                }
+
+                var autrePrediction = listePrediction.filter(
+                  x => x.GamePrimaryKey == element.gamePk
+                );
+
+                let match = new MatchPrediction({
+                  utilisateur: utilisateur,
+                  gamePk: element.gamePk,
+                  equipeVisiteur: equipeVisiteur,
+                  equipeLocal: equipeLocal,
+                  pointageVisiteur: element.teams.away.score,
+                  pointageLocal: element.teams.home.score,
+                  pointagePredictionVisiteur:
+                    predictionMatchUtilisateur != null
+                      ? predictionMatchUtilisateur.PointageVisiteur
+                      : "",
+
+                  pointagePredictionLocal:
+                    predictionMatchUtilisateur != null
+                      ? predictionMatchUtilisateur.PointageLocal
+                      : "",
+                  autrePrediction: autrePrediction,
+                  arena: element.venue.name,
+                });
+
+                match.estPredictionGagnante = EstPredictionGagnante(
+                  predictionMatchUtilisateur,
+                  element.teams.away.score,
+                  element.teams.home.score
+                );
+
+                match.estPointagePredictionExacte = EstPredictionExacte(
+                  predictionMatchUtilisateur,
+                  element.teams.away.score,
+                  element.teams.home.score
+                );
+
+                match.heure = TrouverHeure(element);
+                tableau.push(match);
+              });
+              res.send(tableau);
+            }
+          );
+        }
+        //res.send(tableau)
+      });
+    });
 };
 
 exports.ObtenirListeDatePrediction = function(req, res) {
@@ -56,57 +282,6 @@ exports.ObtenirListeDatePrediction = function(req, res) {
   }
 
   res.send(daysOfYear);
-};
-
-exports.ObtenirGame = function(req, res) {
-  var dateDebut = queryString.ObtenirDateDebut(req);
-  var url =
-    "https://statsapi.web.nhl.com/api/v1/schedule?startDate=" +
-    dateDebut +
-    "&endDate=" +
-    dateDebut +
-    "&expand=schedule.teams";
-
-  axios.get(url).then(function(response) {
-    var listeNhl = response.data.dates;
-    var games = listeNhl[0].games;
-    var retour = [];
-    games.forEach(element => {
-      var dateGameOfficielle = element.gameDate.substring(
-        0,
-        element.gameDate.indexOf("T")
-      );
-      if (dateGameOfficielle == dateDebut) {
-        retour.push(element);
-      }
-    });
-    res.send(retour);
-  });
-};
-exports.ObtenirPrediction = function(req, res) {
-  var courriel = queryString.ObtenirCourriel(req);
-  var gamePk = queryString.ObtenirGamePk(req);
-  Prediction.find({ "Utilisateur.Courriel": courriel }).exec(function(
-    err,
-    docs
-  ) {
-    var prediction = docs.find(x => x.GamePrimaryKey == gamePk);
-    res.send(prediction);
-  });
-};
-
-exports.ObtenirToutesPrediction = function(req, res) {
-  var gamePk = queryString.ObtenirGamePk(req);
-  
-  Prediction.find().exec(function(err, docs) {
-    var tableau = [];
-    docs.forEach(element => {
-      if (element.GamePrimaryKey == gamePk) {
-        tableau.push(element);
-      }
-    });
-    res.send(tableau);
-  });
 };
 
 exports.EnregistrerPrediction = function(req, res) {
@@ -177,7 +352,7 @@ exports.ObtenirClassement = function(req, res) {
     Prediction.find({}).exec(function(err, docs) {
       var retour = [];
       for (let index = 0; index < docs.length; index++) {
-        var game = trouverGame(listeNhl, docs[index].GamePrimaryKey);
+        var game = TrouverGame(listeNhl, docs[index].GamePrimaryKey);
 
         if (game != null) {
           var estPredictionVisiteurGagnant = false;
