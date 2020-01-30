@@ -50,8 +50,8 @@ export default {
   },
   data: function() {
     return {
-      Courriel: "sagaan@hotmail.com",
-      MotPasse: "1",
+      Courriel: "",
+      MotPasse: "",
       messageErreur: "",
       estErreur: false
     };
