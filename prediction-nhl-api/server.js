@@ -11,7 +11,9 @@ var whitelist = [
   "http://localhost:8082",
   "http://localhost:8083",
   "http://cuntcock.com",
-  "http://va-chier.com"
+  "http://va-chier.com",
+  "http://etouelle.com",
+  "http://predictionnhl.etouelle.com",
 ];
 var corsOptions = {
   credentials: true,
