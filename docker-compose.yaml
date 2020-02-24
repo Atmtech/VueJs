@@ -31,3 +31,11 @@ services:
     image: api.prediction-nhl.com
     environment:
       - VIRTUAL_HOST=api-predictionnhl.etouelle.com
+  api-twiggy:
+    image: api.twiggy.com
+    environment:
+      - VIRTUAL_HOST=api-twiggy.etouelle.com
+  site-twiggy:
+    image: site.twiggy.com
+    environment:
+      - VIRTUAL_HOST=twiggy.etouelle.com      
