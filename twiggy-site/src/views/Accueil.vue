@@ -6,7 +6,7 @@
           <h5 class="card-title">Successful operation.</h5>
           <p class="card-text">
             Thank you !
-            {{ Etudiants }}
+            {{ Students }}
           </p>
         </div>
       </div>
@@ -17,11 +17,24 @@
           <h5 class="card-title">WRITE THE REQUIRED INFORMATIONS</h5>
           <p class="card-text"></p>
 
+          <div class="row" pl-3 pr-3 v-if="erreurs.length">
+            <div class="col-12">
+              <div class="alert alert-danger">
+                <h5><i class="icon fas fa-ban"></i> Some errors ...</h5>
+                <ul>
+                  <li v-for="erreur in erreurs" v-bind:key="erreur">
+                    {{ erreur }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           <div class="row pl-3 pr-3">
             <div class="label font-weight-bold ">
               What is your group number ?
             </div>
-            <input class="form-control" v-model="NoGroupe" />
+            <input class="form-control" v-model="Group" />
           </div>
 
           <div class="row pl-3 pr-3">
@@ -32,13 +45,13 @@
           </div>
           <div class="row pl-3 pr-3">
             <div class="label font-weight-bold">List all the student name</div>
-            <input class="form-control" v-model="Etudiants" />
+            <input class="form-control" v-model="Students" />
           </div>
           <div class="row pl-3 pr-3">
             <div class="label font-weight-bold">
               Write the url address of your movie
             </div>
-            <input class="form-control" v-model="UrlMedia" />
+            <input class="form-control" v-model="Url" />
           </div>
 
           <div class="label mt-3 font-weight-bold">
@@ -84,25 +97,47 @@ export default {
   },
   data: function() {
     return {
-      NoGroupe: null,
+      Group: null,
       Style: null,
-      Etudiants: null,
-      UrlMedia: null,
-      estEnregistre: false
+      Students: null,
+      Url: null,
+      estEnregistre: false,
+      erreurs: []
     };
   },
   methods: {
+    validerChampsRequis: function(champs) {
+      if (!eval("this." + champs)) {
+        this.erreurs.push(champs + " mandatory.");
+      }
+    },
+    validerFormulaire: function() {
+      if (this.Group && this.Style && this.Students && this.Url) {
+        return true;
+      } else {
+        this.erreurs = [];
+        this.validerChampsRequis("Group");
+        this.validerChampsRequis("Style");
+        this.validerChampsRequis("Students");
+        this.validerChampsRequis("Url");
+
+        return false;
+      }
+    },
+
     enregistrer: function() {
-      var corps = {
-        NoGroupe: this.NoGroupe,
-        Style: this.Style,
-        Etudiants: this.Etudiants,
-        UrlMedia: this.UrlMedia
-      };
-      // eslint-disable-next-line no-unused-vars
-      Services.post("SauvegarderMedia", {}, corps).then(response => {
-        this.estEnregistre = true;
-      });
+      if (this.validerFormulaire()) {
+        var corps = {
+          NoGroupe: this.Group,
+          Style: this.Style,
+          Etudiants: this.Students,
+          UrlMedia: this.Url
+        };
+        // eslint-disable-next-line no-unused-vars
+        Services.post("SauvegarderMedia", {}, corps).then(response => {
+          this.estEnregistre = true;
+        });
+      }
     }
   },
   mounted() {}
