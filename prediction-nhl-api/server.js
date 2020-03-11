@@ -14,6 +14,7 @@ var whitelist = [
   "http://va-chier.com",
   "http://etouelle.com",
   "http://predictionnhl.etouelle.com",
+  "http://api-predictionnhl.etouelle.com",
 ];
 var corsOptions = {
   credentials: true,
